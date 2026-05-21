@@ -1,0 +1,90 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+}
+
+const { title, description, canonicalUrl } = Astro.props;
+const siteUrl = 'https://abogadojuanfeliperestreposanchez.com';
+const fullUrl = canonicalUrl ? `${siteUrl}${canonicalUrl}` : siteUrl;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "LegalService",
+  "name": "Abogado Juan Felipe Restrepo Sánchez",
+  "description": description,
+  "url": siteUrl,
+  "telephone": "+573104547770",
+  "priceRange": "$$",
+  "areaServed": {
+    "@type": "State",
+    "name": "Antioquia"
+  },
+  "serviceType": [
+    "Defensa Penal",
+    "Derecho Laboral",
+    "Derecho Civil",
+    "Restitución de Tierras"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Apartadó",
+    "addressRegion": "Antioquia",
+    "addressCountry": "CO"
+  },
+  "openingHours": "Mo-Fr 08:00-18:00",
+  "image": `${siteUrl}/og-image.png`,
+  "sameAs": []
+};
+
+const jsonLd = JSON.stringify(schema);
+---
+
+<!doctype html>
+<html lang="es-CO" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={fullUrl} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta name="theme-color" content="#000033" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={fullUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+
+    <script type="application/ld+json" set:html={jsonLd} />
+
+    <style is:global>
+      html {
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-body text-on-surface bg-surface antialiased">
+    <slot />
+  </body>
+</html>

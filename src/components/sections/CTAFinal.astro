@@ -1,0 +1,86 @@
+---
+const phone1 = '3113582728';
+const phone2 = '3107285035';
+const phone1Clean = phone1.replace(/\D/g, '');
+const phone2Clean = phone2.replace(/\D/g, '');
+const whatsappUrl1 = `https://wa.me/57${phone1Clean}`;
+const whatsappUrl2 = `https://wa.me/57${phone2Clean}`;
+const callUrl1 = `tel:+57${phone1Clean}`;
+const callUrl2 = `tel:+57${phone2Clean}`;
+const email = 'juanphelipe@hotmail.com';
+---
+
+<section class="py-20 md:py-32 bg-white" id="contact">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
+      <div class="md:col-span-5">
+        <h2 class="text-4xl font-black font-headline text-primary-container mb-6">Contáctenos</h2>
+        <p class="text-on-surface-variant mb-12 leading-relaxed">
+          Para asuntos legales urgentes o consultas programadas, puede comunicarse a través de nuestros canales oficiales o visitar nuestra oficina en Apartadó.
+        </p>
+
+        <div class="space-y-8">
+          <div class="flex items-center gap-6">
+            <div class="w-14 h-14 bg-surface-container-low rounded-full flex items-center justify-center text-secondary">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-outline uppercase tracking-widest">Líneas de Atención</p>
+              <p class="text-xl font-bold text-primary-container">311 358 2728</p>
+              <p class="text-xl font-bold text-primary-container">310 728 5035</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-6">
+            <div class="w-14 h-14 bg-surface-container-low rounded-full flex items-center justify-center text-secondary">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-outline uppercase tracking-widest">Correo Electrónico</p>
+              <p class="text-xl font-bold text-primary-container">juanphelipe@hotmail.com</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-6">
+            <div class="w-14 h-14 bg-surface-container-low rounded-full flex items-center justify-center text-secondary">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-outline uppercase tracking-widest">Ubicación</p>
+              <p class="text-lg font-bold text-primary-container leading-snug">
+                Calle 97 # 103-20 - Ed. Perla Negra, Oficina 301. <br />
+                Barrio Ortiz - Apartadó, Antioquia
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-7">
+        <div class="bg-surface-container-low p-8 rounded-3xl h-full min-h-[400px] overflow-hidden relative border border-outline-variant/30">
+          <div class="absolute inset-0 bg-slate-200 opacity-40">
+            <div class="w-full h-full bg-gradient-to-br from-secondary-fixed/20 to-primary-container/10"></div>
+          </div>
+          <div class="relative h-full flex flex-col justify-end">
+            <div class="bg-white p-8 rounded-2xl shadow-xl max-w-sm">
+              <h4 class="font-bold font-headline text-primary-container mb-2">Oficina Principal</h4>
+              <p class="text-sm text-on-surface-variant mb-4 italic">Ubicados en el corazón financiero de Apartadó para su comodidad.</p>
+              <a class="text-secondary font-bold text-sm flex items-center gap-2 hover:underline" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">
+                Abrir en Google Maps
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

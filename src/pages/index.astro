@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Hero from '../components/sections/Hero.astro';
+import Servicios from '../components/sections/Servicios.astro';
+import Credibilidad from '../components/sections/Credibilidad.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import CTAFinal from '../components/sections/CTAFinal.astro';
+import FloatingButton from '../components/ui/FloatingButton.astro';
+
+const title = 'Abogado Juan Felipe Restrepo Sánchez | Apartadó - Urabá';
+const description = 'Abogado especializado en derecho penal, laboral, civil y restitución de tierras en Apartadó, Antioquia. Atención personalizada y disponibilidad inmediata. Consulte ahora.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main>
+    <Hero />
+    <Servicios />
+    <Credibilidad />
+    <FAQ />
+    <CTAFinal />
+  </main>
+  <Footer />
+  <FloatingButton phone="573107285035" />
+</BaseLayout>
