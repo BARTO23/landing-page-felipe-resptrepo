@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Error | Abogado Juan Felipe Restrepo Sánchez"
+  description="Ocurrió un error inesperado."
+>
+  <main class="min-h-screen bg-[#e5e1e6] py-20">
+    <div class="max-w-lg mx-auto px-4 sm:px-6">
+      <div class="bg-white p-8 rounded-lg shadow-soft text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
+          Algo salió mal
+        </h1>
+        <p class="text-on-surface-variant mb-6">
+          Ocurrió un error inesperado. Por favor, intenta de nuevo o contacta al abogado directamente.
+        </p>
+        <div class="flex flex-col gap-3">
+          <a
+            href="/"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm bg-primary-container text-on-primary hover:bg-primary-fixed transition-all duration-200"
+          >
+            Volver al inicio
+          </a>
+          <a
+            href="https://wa.me/573107285035"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-200"
+          >
+            Contactar por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { servicios } from '../data/servicios';
+
+const servicioId = Astro.url.searchParams.get('servicio');
+const servicio = servicios.find((s) => s.id === servicioId);
+
+const hoy = new Date();
+const hoyStr = hoy.toISOString().split('T')[0];
+
+const horasDisponibles = [
+  '08:00', '09:00', '10:00', '11:00',
+  '14:00', '15:00', '16:00', '17:00',
+];
+---
+
+<BaseLayout
+  title={servicio ? `Agendar asesoría - ${servicio.titulo} | Abogado Juan Felipe Restrepo Sánchez` : 'Agendar no disponible'}
+  description="Selecciona la fecha y hora para tu asesoría legal."
+>
+  <main class="min-h-screen bg-[#e5e1e6] py-20">
+    <div class="max-w-lg mx-auto px-4 sm:px-6">
+      {servicio ? (
+        <div class="bg-white p-8 rounded-lg shadow-soft">
+          <div class="mb-8">
+            <p class="text-secondary font-semibold text-sm tracking-[0.2em] uppercase mb-2">
+              Agendar asesoría
+            </p>
+            <h1 class="font-headline text-2xl font-bold text-on-surface">
+              {servicio.titulo}
+            </h1>
+            <p class="text-on-surface-variant mt-2">
+              {servicio.descripcion}
+            </p>
+            <p class="text-sm font-semibold text-on-surface mt-2">
+              Valor: ${servicio.precio.toLocaleString('es-CO')} COP
+            </p>
+          </div>
+
+          <form id="booking-form" class="space-y-6">
+            <input type="hidden" name="servicio_id" value={servicio.id} />
+
+            <div>
+              <label for="fecha" class="block text-sm font-semibold text-on-surface mb-2">
+                Fecha de la asesoría
+              </label>
+              <input
+                type="date"
+                id="fecha"
+                name="fecha"
+                min={hoyStr}
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              />
+              <p id="fecha-error" class="text-xs text-red-600 mt-1 hidden">
+                Solo hay disponibilidad de lunes a viernes
+              </p>
+            </div>
+
+            <div>
+              <label for="hora" class="block text-sm font-semibold text-on-surface mb-2">
+                Hora de la asesoría
+              </label>
+              <select
+                id="hora"
+                name="hora"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
+              >
+                <option value="">Selecciona una hora</option>
+                {horasDisponibles.map((hora) => (
+                  <option value={hora}>{hora}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label for="nombre" class="block text-sm font-semibold text-on-surface mb-2">
+                Tu nombre completo
+              </label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Ej: Juan Pérez"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="telefono" class="block text-sm font-semibold text-on-surface mb-2">
+                Tu número de teléfono
+              </label>
+              <input
+                type="tel"
+                id="telefono"
+                name="telefono"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Ej: 3001234567"
+                required
+              />
+            </div>
+
+            <div id="form-error" class="text-sm text-red-600 hidden"></div>
+
+            <button
+              type="submit"
+              id="continuar-btn"
+              class="w-full bg-primary-container text-on-primary font-headline font-semibold py-3 px-6 rounded-md hover:bg-primary-fixed transition-all duration-200"
+            >
+              Continuar al pago — ${servicio.precio.toLocaleString('es-CO')} COP
+            </button>
+          </form>
+        </div>
+      ) : (
+        <div class="bg-white p-8 rounded-lg shadow-soft text-center">
+          <h1 class="font-headline text-2xl font-bold text-on-surface mb-4">
+            Servicio no encontrado
+          </h1>
+          <p class="text-on-surface-variant mb-6">
+            El servicio seleccionado no existe o ha sido desactivado.
+          </p>
+          <a
+            href="/#servicios"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm bg-primary-container text-on-primary hover:bg-primary-fixed transition-all duration-200"
+          >
+            Ver servicios disponibles
+          </a>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('booking-form');
+  const fechaInput = document.getElementById('fecha');
+  const fechaError = document.getElementById('fecha-error');
+  const formError = document.getElementById('form-error');
+
+  function esFinDeSemana(fechaStr) {
+    const fecha = new Date(fechaStr + 'T12:00:00');
+    const dia = fecha.getDay();
+    return dia === 0 || dia === 6;
+  }
+
+  fechaInput?.addEventListener('change', () => {
+    if (esFinDeSemana(fechaInput.value)) {
+      fechaError.classList.remove('hidden');
+      fechaInput.value = '';
+    } else {
+      fechaError.classList.add('hidden');
+    }
+  });
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    formError.classList.add('hidden');
+
+    const data = new FormData(form);
+    const fecha = data.get('fecha');
+    const hora = data.get('hora');
+    const nombre = data.get('nombre');
+    const telefono = data.get('telefono');
+    const servicioId = data.get('servicio_id');
+
+    const camposFaltantes = [];
+    if (!fecha) camposFaltantes.push('fecha');
+    if (!hora) camposFaltantes.push('hora');
+    if (!nombre?.toString().trim()) camposFaltantes.push('nombre');
+    if (!telefono?.toString().trim()) camposFaltantes.push('teléfono');
+
+    if (camposFaltantes.length > 0) {
+      formError.textContent = `Completa los siguientes campos: ${camposFaltantes.join(', ')}`;
+      formError.classList.remove('hidden');
+      return;
+    }
+
+    if (esFinDeSemana(fecha)) {
+      formError.textContent = 'Selecciona una fecha entre lunes y viernes';
+      formError.classList.remove('hidden');
+      return;
+    }
+
+    const cita = {
+      f: fecha,
+      h: hora,
+      n: nombre.toString().trim(),
+      t: telefono.toString().trim(),
+    };
+
+    const citaStr = encodeURIComponent(btoa(JSON.stringify(cita)));
+    window.location.href = `/pago?servicio=${servicioId}&cita=${citaStr}`;
+  });
+</script>

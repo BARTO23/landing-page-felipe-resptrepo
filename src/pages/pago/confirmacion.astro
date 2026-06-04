@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const status = Astro.url.searchParams.get('status');
+const paymentId = Astro.url.searchParams.get('payment_id');
+const externalRef = Astro.url.searchParams.get('external_reference');
+
+let bookingInfo: { f?: string; h?: string; n?: string } | null = null;
+if (externalRef) {
+  try {
+    const parsed = JSON.parse(externalRef);
+    if (parsed.f && parsed.h && parsed.n) {
+      bookingInfo = parsed;
+    }
+  } catch {
+    // not JSON — no booking data
+  }
+}
+---
+
+<BaseLayout
+  title="Confirmación de pago | Abogado Juan Felipe Restrepo Sánchez"
+  description="Resultado del pago de tus servicios legales."
+>
+  <main class="min-h-screen bg-[#e5e1e6] py-20">
+    <div class="max-w-lg mx-auto px-4 sm:px-6">
+      <div class="bg-white p-8 rounded-lg shadow-soft text-center">
+        {status === 'approved' ? (
+          <>
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
+              ¡Pago exitoso!
+            </h1>
+            <p class="text-on-surface-variant mb-6">
+              Gracias por tu pago. Hemos recibido la confirmación de forma correcta.
+            </p>
+            {paymentId && (
+              <p class="text-sm text-on-surface-variant mb-6">
+                ID de transacción: <span class="font-mono">{paymentId}</span>
+              </p>
+            )}
+            {bookingInfo ? (
+              <div class="bg-[#e5e1e6] p-4 rounded-md mb-6">
+                <p class="text-sm font-semibold text-on-surface mb-2">
+                  Asesoría agendada
+                </p>
+                <p class="text-sm text-on-surface-variant">
+                  Fecha: {bookingInfo.f} a las {bookingInfo.h}
+                </p>
+                <p class="text-sm text-on-surface-variant">
+                  Cliente: {bookingInfo.n}
+                </p>
+                <p class="text-xs text-on-surface-variant mt-2">
+                  El evento ha sido agregado al calendario del abogado.
+                </p>
+              </div>
+            ) : (
+              <div class="bg-[#e5e1e6] p-4 rounded-md mb-6">
+                <p class="text-sm text-on-surface-variant mb-2">
+                  El abogado se comunicará contigo pronto para coordinar los siguientes pasos.
+                </p>
+              </div>
+            )}
+            <a
+              href="https://wa.me/573107285035"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md font-headline font-semibold text-sm bg-[#25D366] text-white hover:bg-[#1DA851] transition-all duration-200"
+            >
+              Contactar por WhatsApp
+            </a>
+          </>
+        ) : status === 'rejected' ? (
+          <>
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
+              Pago rechazado
+            </h1>
+            <p class="text-on-surface-variant mb-6">
+              El pago no pudo ser procesado. Puedes intentar con otro medio de pago o contactar al abogado.
+            </p>
+            <div class="flex flex-col gap-3">
+              <a
+                href="/pago"
+                class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm bg-primary-container text-on-primary hover:bg-primary-fixed transition-all duration-200"
+              >
+                Intentar de nuevo
+              </a>
+              <a
+                href="https://wa.me/573107285035"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-200"
+              >
+                Contactar al abogado
+              </a>
+            </div>
+          </>
+        ) : (
+          <>
+            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
+              Pago pendiente
+            </h1>
+            {externalRef?.startsWith('ticket') ? (
+              <p class="text-on-surface-variant mb-6">
+                Has elegido pagar en efectivo. Sigue las instrucciones en tu comprobante para completar el pago en la entidad correspondiente.
+              </p>
+            ) : (
+              <p class="text-on-surface-variant mb-6">
+                Tu pago está siendo procesado. Te notificaremos cuando se confirme.
+              </p>
+            )}
+            <a
+              href="/"
+              class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm bg-primary-container text-on-primary hover:bg-primary-fixed transition-all duration-200"
+            >
+              Volver al inicio
+            </a>
+          </>
+        )}
+      </div>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
+import node from '@astrojs/node';
 
 export default defineConfig({
   site: 'https://abogadojuanfeliperestreposanchez.com',
@@ -8,7 +9,8 @@ export default defineConfig({
     tailwind(),
     sitemap()
   ],
-  output: 'static',
+  output: 'server',
+  adapter: node({ mode: 'standalone' }),
   build: {
     inlineStylesheets: 'auto'
   }
