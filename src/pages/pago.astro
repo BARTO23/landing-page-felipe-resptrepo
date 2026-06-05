@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { servicios, type Servicio } from '../data/servicios';
+import { servicios } from '../data/servicios';
 
 const servicioId = Astro.url.searchParams.get('servicio');
 const servicio = servicios.find((s) => s.id === servicioId);
-const publicKey = import.meta.env.MP_PUBLIC_KEY;
 const citaParam = Astro.url.searchParams.get('cita');
 
 let citaData: Record<string, string> | null = null;
@@ -19,7 +18,7 @@ if (citaParam) {
 
 <BaseLayout
   title={servicio ? `Pagar - ${servicio.titulo} | Abogado Juan Felipe Restrepo Sánchez` : 'Pago no disponible'}
-  description="Realiza el pago de tus servicios legales de forma segura con Mercado Pago."
+  description="Realiza el pago de tus servicios legales de forma segura con ePayco."
 >
   <main class="min-h-screen bg-[#e5e1e6] py-20">
     <div class="max-w-lg mx-auto px-4 sm:px-6">
@@ -59,18 +58,18 @@ if (citaParam) {
           </div>
 
           <button
-            id="mp-pagar-btn"
+            id="epayco-pagar-btn"
             class="w-full bg-primary-container text-on-primary font-headline font-semibold py-3 px-6 rounded-md hover:bg-primary-fixed transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             data-servicio-id={servicio.id}
           >
-            Pagar con Mercado Pago
+            Pagar con ePayco
           </button>
 
-          <div id="mp-error" class="mt-4 text-red-600 text-sm hidden"></div>
+          <div id="epayco-error" class="mt-4 text-red-600 text-sm hidden"></div>
 
           <div class="mt-6 pt-6 border-t border-gray-200">
             <p class="text-xs text-on-surface-variant text-center">
-              Pago procesado de forma segura por Mercado Pago.
+              Pago procesado de forma segura por ePayco.
               Aceptamos Nequi, Bancolombia, PSE, Daviplata, efectivo y tarjetas.
             </p>
           </div>
@@ -95,9 +94,11 @@ if (citaParam) {
   </main>
 </BaseLayout>
 
-<script define:vars={{ publicKey, citaData }}>
-  const btn = document.getElementById('mp-pagar-btn');
-  const errorDiv = document.getElementById('mp-error');
+<script is:inline src="/checkout-v2.js"></script>
+
+<script define:vars={{ citaData }}>
+  const btn = document.getElementById('epayco-pagar-btn');
+  const errorDiv = document.getElementById('epayco-error');
 
   const payload = {
     servicio_id: btn?.dataset.servicioId,
@@ -110,14 +111,14 @@ if (citaParam) {
     payload.telefono_cliente = citaData.t || '';
   }
 
-  if (btn && publicKey) {
+  if (btn) {
     btn.addEventListener('click', async () => {
       btn.disabled = true;
       btn.textContent = 'Procesando...';
       errorDiv.classList.add('hidden');
 
       try {
-        const res = await fetch('/api/create-preference', {
+        const res = await fetch('/api/epayco/create-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -130,16 +131,21 @@ if (citaParam) {
 
         const data = await res.json();
 
-        if (data.init_point) {
-          window.location.href = data.init_point;
+        if (data.sessionId && typeof ePayco !== 'undefined') {
+          const checkout = ePayco.checkout.configure({
+            sessionId: data.sessionId,
+            type: 'standard',
+            test: true,
+          });
+          checkout.open();
         } else {
-          throw new Error('No se pudo obtener la URL de pago');
+          throw new Error('No se pudo inicializar el medio de pago');
         }
       } catch (err) {
         errorDiv.textContent = err instanceof Error ? err.message : 'Error inesperado. Intente nuevamente.';
         errorDiv.classList.remove('hidden');
         btn.disabled = false;
-        btn.textContent = 'Pagar con Mercado Pago';
+        btn.textContent = 'Pagar con ePayco';
       }
     });
   }

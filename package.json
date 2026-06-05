@@ -15,8 +15,7 @@
     "@astrojs/sitemap": "^3.7.2",
     "astro": "^5.0.0",
     "google-auth-library": "^10.6.2",
-    "googleapis": "^173.0.0",
-    "mercadopago": "^3.1.0"
+    "googleapis": "^173.0.0"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^5.1.0",

@@ -1,21 +1,40 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const status = Astro.url.searchParams.get('status');
-const paymentId = Astro.url.searchParams.get('payment_id');
-const externalRef = Astro.url.searchParams.get('external_reference');
+const refPayco = Astro.url.searchParams.get('ref_payco');
+const response = Astro.url.searchParams.get('x_response');
+const transactionId = Astro.url.searchParams.get('x_transaction_id');
+const amount = Astro.url.searchParams.get('x_amount');
+const currency = Astro.url.searchParams.get('x_currency_code');
+const franchise = Astro.url.searchParams.get('x_franchise');
+const approvalCode = Astro.url.searchParams.get('x_approval_code');
+const responseReason = Astro.url.searchParams.get('x_response_reason_text');
+
+const extra2 = Astro.url.searchParams.get('x_extra2');
+const extra3 = Astro.url.searchParams.get('x_extra3');
+const extra4 = Astro.url.searchParams.get('x_extra4');
+const extra5 = Astro.url.searchParams.get('x_extra5');
 
 let bookingInfo: { f?: string; h?: string; n?: string } | null = null;
-if (externalRef) {
-  try {
-    const parsed = JSON.parse(externalRef);
-    if (parsed.f && parsed.h && parsed.n) {
-      bookingInfo = parsed;
-    }
-  } catch {
-    // not JSON — no booking data
+if (extra2 || extra3 || extra4) {
+  bookingInfo = {
+    f: extra2 || undefined,
+    h: extra3 || undefined,
+    n: extra4 || undefined,
+  };
+}
+
+function mapStatus(status: string | null): string {
+  switch (status) {
+    case 'Aceptada': return 'approved';
+    case 'Rechazada': return 'rejected';
+    case 'Pendiente': return 'pending';
+    case 'Fallida': return 'failed';
+    default: return 'unknown';
   }
 }
+
+const mappedStatus = mapStatus(response);
 ---
 
 <BaseLayout
@@ -25,7 +44,7 @@ if (externalRef) {
   <main class="min-h-screen bg-[#e5e1e6] py-20">
     <div class="max-w-lg mx-auto px-4 sm:px-6">
       <div class="bg-white p-8 rounded-lg shadow-soft text-center">
-        {status === 'approved' ? (
+        {mappedStatus === 'approved' ? (
           <>
             <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,9 +57,9 @@ if (externalRef) {
             <p class="text-on-surface-variant mb-6">
               Gracias por tu pago. Hemos recibido la confirmación de forma correcta.
             </p>
-            {paymentId && (
+            {refPayco && (
               <p class="text-sm text-on-surface-variant mb-6">
-                ID de transacción: <span class="font-mono">{paymentId}</span>
+                ID de transacción: <span class="font-mono">{refPayco}</span>
               </p>
             )}
             {bookingInfo ? (
@@ -74,7 +93,7 @@ if (externalRef) {
               Contactar por WhatsApp
             </a>
           </>
-        ) : status === 'rejected' ? (
+        ) : mappedStatus === 'rejected' || mappedStatus === 'failed' ? (
           <>
             <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,10 +101,10 @@ if (externalRef) {
               </svg>
             </div>
             <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
-              Pago rechazado
+              Pago {mappedStatus === 'failed' ? 'fallido' : 'rechazado'}
             </h1>
             <p class="text-on-surface-variant mb-6">
-              El pago no pudo ser procesado. Puedes intentar con otro medio de pago o contactar al abogado.
+              {responseReason || 'El pago no pudo ser procesado. Puedes intentar con otro medio de pago o contactar al abogado.'}
             </p>
             <div class="flex flex-col gap-3">
               <a
@@ -104,7 +123,7 @@ if (externalRef) {
               </a>
             </div>
           </>
-        ) : (
+        ) : mappedStatus === 'pending' ? (
           <>
             <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,15 +133,31 @@ if (externalRef) {
             <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
               Pago pendiente
             </h1>
-            {externalRef?.startsWith('ticket') ? (
-              <p class="text-on-surface-variant mb-6">
-                Has elegido pagar en efectivo. Sigue las instrucciones en tu comprobante para completar el pago en la entidad correspondiente.
-              </p>
-            ) : (
-              <p class="text-on-surface-variant mb-6">
-                Tu pago está siendo procesado. Te notificaremos cuando se confirme.
-              </p>
-            )}
+            <p class="text-on-surface-variant mb-6">
+              {franchise === 'CASH'
+                ? 'Has elegido pagar en efectivo. Realiza el pago en el punto físico correspondiente para completar la transacción.'
+                : 'Tu pago está siendo procesado. Te notificaremos cuando se confirme.'}
+            </p>
+            <a
+              href="/"
+              class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm bg-primary-container text-on-primary hover:bg-primary-fixed transition-all duration-200"
+            >
+              Volver al inicio
+            </a>
+          </>
+        ) : (
+          <>
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h1 class="font-headline text-2xl font-bold text-on-surface mb-2">
+              Procesando pago
+            </h1>
+            <p class="text-on-surface-variant mb-6">
+              Estamos procesando tu pago. Te notificaremos cuando se confirme.
+            </p>
             <a
               href="/"
               class="inline-flex items-center justify-center px-6 py-3 rounded-md font-headline font-semibold text-sm bg-primary-container text-on-primary hover:bg-primary-fixed transition-all duration-200"

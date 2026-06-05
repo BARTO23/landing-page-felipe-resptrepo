@@ -13,7 +13,7 @@ export const servicios: Servicio[] = [
     titulo: 'Defensa Penal',
     descripcion: 'Representación integral en procesos judiciales. Defendemos sus derechos y los de su familia con estrategias efectivas.',
     icon: 'scale',
-    precio: 500000,
+    precio: 100000,
     duracion_minutos: 60,
   },
   {
@@ -21,7 +21,7 @@ export const servicios: Servicio[] = [
     titulo: 'Derecho Laboral',
     descripcion: 'Asesoría en despidos injustificados, vulneración de derechos, liquidaciones y conflictos con empleadores.',
     icon: 'briefcase',
-    precio: 350000,
+    precio: 100000,
     duracion_minutos: 60,
   },
   {
@@ -29,7 +29,7 @@ export const servicios: Servicio[] = [
     titulo: 'Civil y Familia',
     descripcion: 'Contratos, obligaciones, divorcios, custodia y sucesiones. Soluciones legales para sus conflictos personales.',
     icon: 'home',
-    precio: 400000,
+    precio: 100000,
     duracion_minutos: 60,
   },
   {
@@ -37,7 +37,7 @@ export const servicios: Servicio[] = [
     titulo: 'Restitución de Tierras',
     descripcion: 'Asesoría especializada a víctimas del conflicto armado para recuperar y titular sus predios.',
     icon: 'map',
-    precio: 300000,
+    precio: 100000,
     duracion_minutos: 60,
   },
 ];

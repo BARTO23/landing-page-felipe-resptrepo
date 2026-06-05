@@ -7,7 +7,7 @@ export interface Transaccion {
   servicio_id: string;
   servicio_nombre: string;
   monto: number;
-  estado: 'pending' | 'approved' | 'rejected';
+  estado: 'pending' | 'approved' | 'rejected' | 'failed';
   external_reference: string;
   fecha: string;
   notificacion_id?: string;
