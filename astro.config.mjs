@@ -13,5 +13,12 @@ export default defineConfig({
   adapter: node({ mode: 'standalone' }),
   build: {
     inlineStylesheets: 'auto'
+  },
+  vite: {
+    server: {
+      // Permite exponer el dev server a través de túneles (ngrok) para
+      // probar el webhook de ePayco. No afecta al build de producción.
+      allowedHosts: ['.ngrok-free.dev', '.ngrok.io', '.ngrok-free.app']
+    }
   }
 });
