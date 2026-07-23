@@ -11,6 +11,13 @@ export interface Transaccion {
   external_reference: string;
   fecha: string;
   notificacion_id?: string;
+  gateway: 'epayco' | 'mercadopago' | 'wompi';
+  datos_cita?: {
+    fecha: string;
+    hora: string;
+    nombreCliente: string;
+    telefonoCliente: string;
+  };
 }
 
 const DATA_DIR = resolve('data');
@@ -43,6 +50,11 @@ function guardarTransacciones(transacciones: Transaccion[]) {
 export function buscarTransaccionPorNotificacion(notificacionId: string): Transaccion | undefined {
   const transacciones = leerTransacciones();
   return transacciones.find((t) => t.notificacion_id === notificacionId);
+}
+
+export function buscarTransaccionPorReferencia(referencia: string): Transaccion | undefined {
+  const transacciones = leerTransacciones();
+  return transacciones.find((t) => t.external_reference === referencia);
 }
 
 export function guardarTransaccion(transaccion: Transaccion) {

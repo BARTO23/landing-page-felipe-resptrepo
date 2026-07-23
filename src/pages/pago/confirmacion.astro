@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buscarTransaccionPorReferencia } from '../../lib/transacciones';
 
 const refPayco = Astro.url.searchParams.get('ref_payco');
 const response = Astro.url.searchParams.get('x_response');
@@ -10,6 +11,7 @@ const franchise = Astro.url.searchParams.get('x_franchise');
 const approvalCode = Astro.url.searchParams.get('x_approval_code');
 const responseReason = Astro.url.searchParams.get('x_response_reason_text');
 
+// Extra data
 const extra2 = Astro.url.searchParams.get('x_extra2');
 const extra3 = Astro.url.searchParams.get('x_extra3');
 const extra4 = Astro.url.searchParams.get('x_extra4');
@@ -23,6 +25,9 @@ if (extra2 || extra3 || extra4) {
     n: extra4 || undefined,
   };
 }
+
+// Verificar transaccion en base de datos local
+const tx = refPayco ? buscarTransaccionPorReferencia(refPayco) : null;
 
 function mapStatus(status: string | null): string {
   switch (status) {
@@ -170,3 +175,67 @@ const mappedStatus = mapStatus(response);
     </div>
   </main>
 </BaseLayout>
+
+<script define:vars={{ estadoInicial: mappedStatus }}>
+  // Sistema de polling para verificar estado del pago
+  let pollInterval = null;
+  let pollCount = 0;
+  const MAX_POLLS = 10;
+  const POLL_INTERVAL = 3000; // 3 segundos
+
+  async function verificarEstadoPago() {
+    if (pollCount >= MAX_POLLS) {
+      clearInterval(pollInterval);
+      console.log('Maximo de intentos de verificacion alcanzado');
+      return;
+    }
+
+    try {
+      pollCount++;
+      console.log(`Verificando estado del pago... (${pollCount}/${MAX_POLLS})`);
+      
+      // Aqui puedes agregar una llamada a tu API para verificar el estado real
+      // const res = await fetch('/api/verificar-pago');
+      // const data = await res.json();
+      
+    } catch (error) {
+      console.error('Error al verificar estado:', error);
+    }
+  }
+
+  // Iniciar polling si el estado es unknown o pending
+  if (estadoInicial === 'unknown' || estadoInicial === 'pending') {
+    pollInterval = setInterval(verificarEstadoPago, POLL_INTERVAL);
+  }
+
+  // Boton de reintentar pago - redirigir con datos guardados
+  const retryBtn = document.getElementById('retry-payment-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      try {
+        const saved = localStorage.getItem('bookingSession');
+        if (saved) {
+          const datos = JSON.parse(saved);
+          const cita = { f: datos.fecha, h: datos.hora, n: datos.nombre, t: datos.telefono };
+          const citaStr = encodeURIComponent(btoa(JSON.stringify(cita)));
+          window.location.href = `/pago?servicio=${datos.servicioId}&cita=${citaStr}`;
+        } else {
+          window.location.href = '/#servicios';
+        }
+      } catch (err) {
+        window.location.href = '/#servicios';
+      }
+    });
+  }
+
+  // Limpiar datos de sesion si el pago fue exitoso
+  if (estadoInicial === 'approved') {
+    try {
+      localStorage.removeItem('bookingSession');
+      console.log('Sesion de booking limpiada exitosamente');
+    } catch (e) {
+      console.error('Error al limpiar localStorage:', e);
+    }
+  }
+</script>
